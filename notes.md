@@ -17,3 +17,20 @@
     * Move
     * Punch
     * Shoot
+
+
+Function definition
+-------------------
+
+### Output
+
+We expect output in the form of a formatted string. The command is
+evaluated in character pairs,
+
+```
+class Robot:
+    def react(tiles, board_size, current_position):
+        mnsw
+```
+
+Tiles = dict
