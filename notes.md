@@ -29,7 +29,7 @@ evaluated in character pairs,
 
 ```
 class Robot:
-    def react(tiles, board_size, current_position):
+    def react(tiles, board_size, current_position, health, action_points):
         mnsw
 ```
 
