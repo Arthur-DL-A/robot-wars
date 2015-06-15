@@ -1,3 +1,10 @@
+Brainstorming
+-------------
+
+We want to write a simple 1v1 AI arena combat game. We'll run a
+competition of sorts where we pit AIs against each other and score or
+rank them.
+
 * Combat AIs
 * Grid-based (moving +1 units, unit(2,3))
 * Square or rectangular finite board
