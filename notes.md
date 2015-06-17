@@ -44,9 +44,9 @@ class and an implementation for the `act()` function. For example:
 
     class Robot:
         def act(self, game):
-            return "guard"
+            return "wait"
 
-This robot would guard for the entire game. Tactical!
+This robot would wait for the entire game. Tactical!
 
 The `game` variable is a dictionary which holds all of the information
 you receive for that turn. Its contents are described in the below
