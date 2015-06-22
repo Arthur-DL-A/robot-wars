@@ -15,10 +15,29 @@ arena, and can take action in a number of different ways, subject to
 their Action Points for that turn. The aim of the game is to destroy the
 opposing robot.
 
-The API reference and other documentation can be found in the `doc`
+
+Making a robot
+--------------
+
+To make a robot, you'll want to consult the Robot class reference, found
+in `doc/api.md`. All other documentation can be found in the `doc`
 folder.
 
-TODO: how scoring works
+To create an AI, simply make a new Python file and define the Robot
+class and an implementation for the `Robot.act(self, game)` function.
+For example:
+
+    class Robot:
+        def act(self, game):
+            return ["guard"]
+
+This robot would guard for the entire game. Tactical!
+
+
+Competition format
+------------------
+
+
 
 
 Notes - TODO into README
@@ -36,15 +55,6 @@ it would be a good base for now.*
 
 To be valid, an AI must be part of the Robot class and must have a
 `make_turn()` function.
-
-To create an AI, simply make a new Python file and define the Robot
-class and an implementation for the `act()` function. For example:
-
-    class Robot:
-        def act(self, game):
-            return "guard"
-
-This robot would guard for the entire game. Tactical!
 
 The `game` variable is a dictionary which holds all of the information
 you receive for that turn. Its contents are described in the below
