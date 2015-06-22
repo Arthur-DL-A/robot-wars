@@ -40,7 +40,9 @@ To be valid, an AI must be part of the Robot class and must have a
 To create an AI, simply make a new Python file and define the Robot
 class and an implementation for the `act()` function. For example:
 
-    class Robot: def act(self, game): return "guard"
+    class Robot:
+        def act(self, game):
+            return "guard"
 
 This robot would guard for the entire game. Tactical!
 
