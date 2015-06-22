@@ -62,10 +62,10 @@ class PlayerWrapper:
     def act(self, tiles, boardSize):
         attrDict = {
                 "health":self.health,
-                "energy":self.energy,
-                "tiles": tiles,
-                "boardsize": boardSize,
-                "position": self.position
+                "action_points":self.energy,
+                "visible_tiles": tiles,
+                "board_size": boardSize,
+                "location": self.position
                 }
         return self.playerRobot.act(attrDict)
 
