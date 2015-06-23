@@ -24,7 +24,7 @@ in `doc/api.md`. All other documentation can be found in the `doc`
 folder.
 
 To create a robot, simply make a new Python file and define the Robot
-class and an implementation for the `Robot.act(self, game)` function.
+class and an implementation for the `Robot.act(self, game)` method.
 For example:
 
     class Robot:

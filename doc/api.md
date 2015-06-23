@@ -7,19 +7,8 @@ a `game` variable, the 'guard' action, and a few variable names. Thought
 it would be a good base for now.*
 
 To be valid, a robot must be part of the Robot class and must implement
-the `Robot.act(args)` function.
-
-To be valid, an AI must be part of the Robot class and must have a
-`make_turn()` function.
-
-To create an AI, simply make a new Python file and define the Robot
-class and an implementation for the `act()` function. For example:
-
-    class Robot:
-        def act(self, game):
-            return "wait"
-
-This robot would wait for the entire game. Tactical!
+the `Robot.act(self, game)` method. You may use any number of other
+methods and attributes (or methods and 
 
 The `game` variable is a dictionary which holds all of the information
 you receive for that turn. Its contents are described in the below
@@ -73,8 +62,8 @@ the top left. You may assume that the game board is 8x8 (TODO), i.e. (0,
 
 
 
-Function definition
--------------------
+Method definition
+-----------------
 
 ### Output
 
