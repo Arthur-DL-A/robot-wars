@@ -1,22 +1,72 @@
-Robot Wars API
---------------
+API reference
+=============
 
-*Note: I took a lot from [Robot
-Game](https://robotgame.net/gettingstarted), including the idea of using
-a `game` variable, the 'guard' action, and a few variable names. Thought
-it would be a good base for now.*
+Creating a robot
+----------------
 
 To be valid, a robot must be part of the Robot class and must implement
 the `Robot.act(self, game)` method. You may use any number of other
-methods and attributes (or methods and 
+methods and attributes. Any data you store in the class (as attributes)
+is stored between turns. In this way, you can record information from
+previous turns.
 
-The `game` variable is a dictionary which holds all of the information
-you receive for that turn. Its contents are described in the below
-sections.
 
-You can access any one of these variables as keys in a dictionary or as
-attributes, e.g. `game['health']`, `game.health`, `game[location].x`
-etc.
+Taking action
+-------------
+
+The method must return one or more valid actions to perform, in a list.
+Depending on your action points, you may be able to perform more than
+one action on your turn. If you want to perform multiple actions, they
+must be in separate elements.
+
+An action is comprised of a list containing one or more strings.
+Depending on the action, you may have to specify a direction, e.g. 'move
+up'. Note that this means you will be returning a *list in a list*.
+
+Following is an example robot which tries to move left then guard every
+turn:
+
+```python
+class Robot:
+    def act(self, game):
+        return [["move", "left"], ["guard"]]
+```
+
+The robot will try to perform as many of the actions you return as
+possible. If it does not have enough action points to perform an action,
+it will stop and end its turn.
+
+Note that even if you only want to perform one action, you still have to
+return a list:
+
+```python
+class Robot:
+    def act(self, game):
+        return [["shoot", "up"]]
+```
+
+
+The `game` variable
+-------------------
+
+Every turn, data is passed to each robot about the board and the current
+game in the `game` dictionary. Details on its contents are described
+below. A summary of the current keys in the dictionary follows:
+
+  * health
+  * action_points
+  * location
+    * x
+    * y
+  * visible_tiles
+    * tile
+      * x
+      * y
+
+
+Note that you can access any one of these variables as keys in a
+dictionary or as attributes of an object: e.g. `game['health']`,
+`game.health`, `game[location].x` etc.
 
 
 ### `visible_tiles`
@@ -59,16 +109,3 @@ Type: `dict`
 The co-ordinate of the tile your robot is on. This is measured (?) from
 the top left. You may assume that the game board is 8x8 (TODO), i.e. (0,
 0) is the top-left corner and (7, 7) the bottom-right.
-
-
-
-Method definition
------------------
-
-### Output
-
-We expect output in the form of a formatted string. The command is
-evaluated in character pairs, [...]
-
-Would it be easier to maybe separate commands by spaces? Slightly less
-confusing too, since we can use more English commands like Robot Game.
