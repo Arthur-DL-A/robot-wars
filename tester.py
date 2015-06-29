@@ -42,7 +42,7 @@ class Board:
             for char in line.strip():
                 tileList.append(tileDict[char])
             self.data.append(tileList)
-     
+
     def __init__(self, dataFileName):
         '''
         The data structure in the format
@@ -58,7 +58,7 @@ class PlayerWrapper:
         self.position = initialPosition
         self.health = 20
         self.energy = 4 #currently used for testing complex patterns
-    
+
     def act(self, tiles, boardSize):
         attrDict = {
                 "health":self.health,
@@ -81,7 +81,7 @@ def player_move(player, direction, board, players):
         dest = (player.position[0] - 1, player.position[1])
     if direction.strip() == "right":
         dest = (player.position[0] + 1, player.position[1])
-    
+
     if board.data[dest[1]][dest[0]][1]:
         player.position = dest
 def player_attack(player, direction, board, players):
