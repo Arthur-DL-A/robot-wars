@@ -8,6 +8,7 @@ import importlib
 
 import attr_dict.AttrDict as struct
 
+
 class BoardPlayerManager:
     '''
     A class that manages the board and its players and runs the high level logic of the game
@@ -23,11 +24,17 @@ class BoardPlayerManager:
                 # Hard coding a value of 3 for the sight range 
                         
 
-    def player_wait(self):
-        pass
+    def player_guard(self, player, move_data, board, players):
+        ''' 
+        ok, this is a test idea for guard.
+        is it alright for a place to start?
+        '''
+        player.health += 1
 
-    def player_move(self):
+    def player_move(self, player, move_data, board, players):
+        direction = move_data[1]
         dest = ()
+        # check the destination tile
         if direction.strip() == "up":
             dest = (player.position[0], player.position[1] - 1) # inverted due to stupid printing
         if direction.strip() == "down":
@@ -37,10 +44,11 @@ class BoardPlayerManager:
         if direction.strip() == "right":
             dest = (player.position[0] + 1, player.position[1])
 
-        if board.data[dest[1]][dest[0]][1]:
-            player.position = dest
+        if board.data[dest[1]][dest[0]][1]:# if the board tile is traversable
+            player.position = dest # move there
 
-    def player_attack(self):
+    def player_attack(self, player, move_data, board, players):
+        direction = move_data[1]
         for other_player in players:
             if direction.strip() == "up":
                 if other_player.position == (player.position[0] - 1, player.position[1]):
@@ -55,23 +63,26 @@ class BoardPlayerManager:
                 if other_player.position == (player.position[0], player.position[1] + 1):
                     other_player.health -= 1
 
-    def player_shoot(self):
+    def player_shoot(self, player, move_data, board, players):
         pass
 
     def make_player_move(self, player, player_move_list):
         for move in player_move_list:
             move_type = move[0]
-            move_direction = move[1] # is this a fair assumption?
+            move_data = move[1:]
             move_table = {
-                    "wait": (0, self.player_wait),
+                    "wait": (0, self.player_guard),
                     "move": (1, self.player_move),
                     "shoot": (2, self.player_attack),
                     "attack": (1, self.player_shoot),
                     }
             if player.energy >= move_table[move][0]:
                 player.energy -= move_table[move][0]
-                move_table[move][1](player, move_direction, self.board,
-                                    self.players)
+                try:
+                    move_table[move][1](player, move_data, self.board,
+                                        self.players)
+                except e:
+                    raise Exception ("You messed up somewhere 'cause you tried to call [", move_type, "] with arguements", move_data)
 
     
 class Board:
@@ -99,8 +110,8 @@ class Board:
             current_line += 1
             print()
 
-    def load_file(self, filename):
-        lines = open(filename).readlines()
+    def load_file(self, file_lines):
+        lines = file_lines
         tile_dict = {}
         size = [int (i) for i in lines[0].split("x")]
         self.board_size = size
@@ -120,19 +131,20 @@ class Board:
                 tileList.append(tile_dict[char])
             self.data.append(tileList)
 
-    def __init__(self, dataFileName):
+    def __init__(self, data_file_lines):
         '''
         The data structure in the format
         ("display-character", "traversable", "damage_on_traverse")
         '''
         self.data = []
         self.board_size = (0,0)
-        self.load_file(dataFileName)
+        self.load_file(data_file_lines)
         self.print_board([])
 
 class PlayerWrapper:
-    def __init__(self, player_robot, initial_position):
+    def __init__(self, player_robot, display_chr, initial_position):
         self.player_robot = player_robot
+        self.display_chr = display_chr
         self.position = initial_position
         self.health = 20
         self.energy = 4 #currently used for testing complex patterns
@@ -146,6 +158,34 @@ class PlayerWrapper:
                 "location": self.position
                 })
         return self.player_robot.act(attributes)
+
+def parse_player_line(player_line):
+    '''
+    returns the corresponding player object
+    '''
+    dummy, disp_chr, position_str, module_name = player_line.split() 
+    # The dummy is there to make the file format work cleaner I could do some string parse but why?
+    player_module = importlib.import_module(module_name)
+    player_robot = player_module.Robot()
+    useable_robot = PlayerWrapper(player_robot, disp_chr, tuple([int(pos) for pos in position_str.split("x")])) # Return the parsed player wrapper
+
+def load_level(filename):
+    '''
+    This function returns the needed things in this format
+    (Board, [players*])
+    '''
+    file_lines = open(filename).readlines()
+    split_index = -1
+    for line_index in range(len(file_lines)):
+        if file_lines[line_index] == "endplayers":
+            split_index = line_index
+            break
+    if split_index == -1:
+        raise Exception ("No end player block found in the file")
+    player_lines = file_lines[:split_index]
+    board_lines = file_lines[split_index + 1:] # the +1 is to exclude the indicator line
+    return Board(board_lines), [parse_player_line(player_line) for player_line in player_lines]
+
 
 if __name__ == "__main__":
     pass
