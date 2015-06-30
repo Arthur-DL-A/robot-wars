@@ -6,9 +6,78 @@
 import sys
 import importlib
 
-import attr_dict
+import attr_dict.AttrDict as struct
 
+class BoardPlayerManager:
+    '''
+    A class that manages the board and its players and runs the high level logic of the game
+    '''
+    def __init__ (self, board, players):
+        ''' Takes the board and players as input and returns an int giving the index of the player that won '''
+        self.board = board
+        self.players = players
+        while not 0 in map(lambda player: player.health, players):# while none of the players healths are 0
+            #play the game
+            for player in players:
+                self.make_player_move(player, player.act(self.board.get_tiles(player.position,3)))
+                # Hard coding a value of 3 for the sight range 
+                        
+
+    def player_wait(self):
+        pass
+
+    def player_move(self):
+        dest = ()
+        if direction.strip() == "up":
+            dest = (player.position[0], player.position[1] - 1) # inverted due to stupid printing
+        if direction.strip() == "down":
+            dest = (player.position[0], player.position[1] + 1) # same
+        if direction.strip() == "left":
+            dest = (player.position[0] - 1, player.position[1])
+        if direction.strip() == "right":
+            dest = (player.position[0] + 1, player.position[1])
+
+        if board.data[dest[1]][dest[0]][1]:
+            player.position = dest
+
+    def player_attack(self):
+        for other_player in players:
+            if direction.strip() == "up":
+                if other_player.position == (player.position[0] - 1, player.position[1]):
+                    other_player.health -= 1
+            if direction.strip() == "down":
+                if other_player.position == (player.position[0] + 1, player.position[1]):
+                    other_player.health -= 1
+            if direction.strip() == "left":
+                if other_player.position == (player.position[0], player.position[1] - 1):
+                    other_player.health -= 1
+            if direction.strip() == "right":
+                if other_player.position == (player.position[0], player.position[1] + 1):
+                    other_player.health -= 1
+
+    def player_shoot(self):
+        pass
+
+    def make_player_move(self, player, player_move_list):
+        for move in player_move_list:
+            move_type = move[0]
+            move_direction = move[1] # is this a fair assumption?
+            move_table = {
+                    "wait": (0, self.player_wait),
+                    "move": (1, self.player_move),
+                    "shoot": (2, self.player_attack),
+                    "attack": (1, self.player_shoot),
+                    }
+            if player.energy >= move_table[move][0]:
+                player.energy -= move_table[move][0]
+                move_table[move][1](player, move_direction, self.board,
+                                    self.players)
+
+    
 class Board:
+    ''' 
+    A class that loads a board file and allows you to perform operations on the loaded data
+    '''
     def get_tiles(self, position, size):
         return self.data[position[1]-size:position[1]+size][position[0]-size:position[0]+size]
 
@@ -69,92 +138,14 @@ class PlayerWrapper:
         self.energy = 4 #currently used for testing complex patterns
 
     def act(self, tiles, board_size):
-        attributes = {
+        attributes = struct(**{
                 "health":self.health,
                 "action_points":self.energy,
                 "visible_tiles": tiles,
                 "board_size": board_size,
                 "location": self.position
-                }
+                })
         return self.player_robot.act(attributes)
 
-def player_wait(player, direction, board, players):
+if __name__ == "__main__":
     pass
-
-def player_move(player, direction, board, players):
-    dest = ()
-    if direction.strip() == "up":
-        dest = (player.position[0], player.position[1] - 1) # inverted due to stupid printing
-    if direction.strip() == "down":
-        dest = (player.position[0], player.position[1] + 1) # same
-    if direction.strip() == "left":
-        dest = (player.position[0] - 1, player.position[1])
-    if direction.strip() == "right":
-        dest = (player.position[0] + 1, player.position[1])
-
-    if board.data[dest[1]][dest[0]][1]:
-        player.position = dest
-
-def player_attack(player, direction, board, players):
-    for other_player in players:
-        if direction.strip() == "up":
-            if other_player.position == (player.position[0] - 1, player.position[1]):
-                other_player.health -= 1
-        if direction.strip() == "down":
-            if other_player.position == (player.position[0] + 1, player.position[1]):
-                other_player.health -= 1
-        if direction.strip() == "left":
-            if other_player.position == (player.position[0], player.position[1] - 1):
-                other_player.health -= 1
-        if direction.strip() == "right":
-            if other_player.position == (player.position[0], player.position[1] + 1):
-                other_player.health -= 1
-
-def player_shoot(player, direction, board, players):
-    pass
-
-def make_player_move(player, board, move, direction, players):
-    move_table = {
-            "wait": (0, player_wait),
-            "move": (1, player_move),
-            "shoot": (2, player_attack),
-            "attack": (1, player_shoot),
-            }
-    if(player.energy >= move_table[move][0]):
-        player.energy -= move_table[move][0]
-        move_table[move][1](player, direction, board, players)
-
-def parse_player_move(player, board, moveString, players):
-    player.energy = 4
-    moveTokens = moveString.split()
-    currentToken = 0
-    while currentToken < len(moveTokens):
-        move = moveTokens[currentToken]
-        direction = moveTokens[currentToken + 1]
-        make_player_move(player, board, move, direction, players)
-        currentToken += 2
-
-
-
-print(sys.argv)
-
-#board = Board(sys.argv[1])
-
-player_one_module = importlib.import_module(sys.argv[2])
-player_one_robot = player_one_module.Robot()
-player_one = PlayerWrapper(player_one_robot, (int(sys.argv[3]), int(sys.argv[4])))
-
-player_two_module = importlib.import_module(sys.argv[5])
-player_two_robot = player_two_module.Robot()
-player_two = PlayerWrapper(player_two_robot, (int(sys.argv[6]), int(sys.argv[7])))
-
-
-number_of_turns = 20
-
-while number_of_turns > 0:
-    board.print_board([player_one, player_two])
-    parse_player_move(player_one, board, player_one.act(board.get_tiles(player_one.position, 3), board.board_size),[player_one, player_two])
-    parse_player_move(player_two, board, player_two.act(board.get_tiles(player_one.position, 3), board.board_size), [player_one, player_two])
-    number_of_turns -= 1
-
-test_dict = AttrDict()
