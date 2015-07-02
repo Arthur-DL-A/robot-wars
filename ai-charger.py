@@ -7,4 +7,4 @@ class Robot:
         print ("loaded charger")
     def act(self, game):
         # TODO
-        return "move right"
+        return [["move", "right"]]

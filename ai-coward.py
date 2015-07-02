@@ -5,4 +5,4 @@
 class Robot:
     def act(self, game):
         # TODO
-        return "wait none"
+        return [["guard"]]
