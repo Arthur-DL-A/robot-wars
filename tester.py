@@ -18,13 +18,14 @@ class BoardPlayerManager:
         self.board = board
         self.players = players
         for i in range(maxTurns):
-        #while not 0 in map(lambda player: player.health, players):
+            # print turn details
+            print ("\n\nTurn number", i, ":") 
             #play the game
             if 0 in map(lambda player: player.health, players):# while none of the players healths are 0
                 break # End the game
             self.board.print_board(self.players)
             for player in players:
-                self.make_player_move(player, player.act(self.board.get_tiles(player.position,3)))
+                self.make_player_move(player, player.act(self.board.get_tiles(player.position,3), self.board.board_size))
                 # Hard coding a value of 3 for the sight range 
         for player in players:
             print (player.display_chr,":", player.health)
@@ -38,7 +39,7 @@ class BoardPlayerManager:
         player.health += 1
 
     def player_move(self, player, move_data, board, players):
-        direction = move_data[1]
+        direction = move_data[0]
         dest = ()
         # check the destination tile
         if direction.strip() == "up":
@@ -54,7 +55,7 @@ class BoardPlayerManager:
             player.position = dest # move there
 
     def player_attack(self, player, move_data, board, players):
-        direction = move_data[1]
+        direction = move_data[0]
         for other_player in players:
             if direction.strip() == "up":
                 if other_player.position == (player.position[0] - 1, player.position[1]):
@@ -77,18 +78,17 @@ class BoardPlayerManager:
             move_type = move[0]
             move_data = move[1:]
             move_table = {
-                    "wait": (0, self.player_guard),
+                    "guard": (0, self.player_guard),
                     "move": (1, self.player_move),
                     "shoot": (2, self.player_attack),
                     "attack": (1, self.player_shoot),
                     }
-            if player.energy >= move_table[move][0]:
-                player.energy -= move_table[move][0]
-                try:
-                    move_table[move][1](player, move_data, self.board,
-                                        self.players)
-                except e:
-                    raise Exception ("You messed up somewhere 'cause you tried to call [", move_type, "] with arguements", move_data)
+            if player.energy >= move_table[move_type][0]:
+                player.energy -= move_table[move_type][0]
+                move_table[move_type][1](player, move_data, self.board,
+                                    self.players)
+                '''except:
+                    raise Exception ("You messed up somewhere 'cause you tried to call [" + move_type + "] with arguements " + str(move_data))'''
 
     
 class Board:
@@ -106,7 +106,7 @@ class Board:
                 printed = False
                 for player in players:
                     if player.position == (current_tile, current_line):
-                        print("@ ", end="")
+                        print(player.display_chr, "", end="")
                         printed = True
                 if not printed:
                     print(tile[0] + " ", end="")
@@ -148,14 +148,16 @@ class Board:
         self.print_board([])
 
 class PlayerWrapper:
+    max_energy = 4
     def __init__(self, player_robot, display_chr, initial_position):
         self.player_robot = player_robot
         self.display_chr = display_chr
         self.position = initial_position
         self.health = 20
-        self.energy = 4 #currently used for testing complex patterns
+        self.energy = PlayerWrapper.max_energy #currently used for testing complex patterns
 
     def act(self, tiles, board_size):
+        self.energy = PlayerWrapper.max_energy
         attributes = struct(**{
                 "health":self.health,
                 "action_points":self.energy,

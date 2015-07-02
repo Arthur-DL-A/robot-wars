@@ -1,5 +1,5 @@
 player 1 1x1 ai-charger
-player 3 -1x-1 ai-coward
+player 3 8x3 ai-coward
 endplayers
 5x10
 # n 0
