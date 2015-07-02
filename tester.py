@@ -6,23 +6,29 @@
 import sys
 import importlib
 
-import attr_dict.AttrDict as struct
+from attr_dict import AttrDict as struct
 
 
 class BoardPlayerManager:
     '''
     A class that manages the board and its players and runs the high level logic of the game
     '''
-    def __init__ (self, board, players):
+    def __init__ (self, board, players, maxTurns):
         ''' Takes the board and players as input and returns an int giving the index of the player that won '''
         self.board = board
         self.players = players
-        while not 0 in map(lambda player: player.health, players):# while none of the players healths are 0
+        for i in range(maxTurns):
+        #while not 0 in map(lambda player: player.health, players):
             #play the game
+            if 0 in map(lambda player: player.health, players):# while none of the players healths are 0
+                break # End the game
+            self.board.print_board(self.players)
             for player in players:
                 self.make_player_move(player, player.act(self.board.get_tiles(player.position,3)))
                 # Hard coding a value of 3 for the sight range 
-                        
+        for player in players:
+            print (player.display_chr,":", player.health)
+            
 
     def player_guard(self, player, move_data, board, players):
         ''' 
@@ -168,13 +174,13 @@ def parse_player_line(player_line):
     player_module = importlib.import_module(module_name)
     player_robot = player_module.Robot()
     useable_robot = PlayerWrapper(player_robot, disp_chr, tuple([int(pos) for pos in position_str.split("x")])) # Return the parsed player wrapper
-
+    return useable_robot
 def load_level(filename):
     '''
     This function returns the needed things in this format
     (Board, [players*])
     '''
-    file_lines = open(filename).readlines()
+    file_lines = [line.strip() for line in open(filename).readlines()]
     split_index = -1
     for line_index in range(len(file_lines)):
         if file_lines[line_index] == "endplayers":
@@ -188,4 +194,6 @@ def load_level(filename):
 
 
 if __name__ == "__main__":
-    pass
+    board, players = load_level(sys.argv[1])
+    manager = BoardPlayerManager(board, players, 10)
+
