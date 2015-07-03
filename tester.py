@@ -5,7 +5,9 @@
 
 import sys
 import importlib
-from tester_module import *
+from tester_module.Board import Board as Board
+from tester_module.BoardPlayerManager import BoardPlayerManager as BoardPlayerManager
+from tester_module.PlayerWrapper import PlayerWrapper as PlayerWrapper
 
 
     
