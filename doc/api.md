@@ -56,14 +56,14 @@ below. A summary of the current keys in the dictionary follows:
   * health
   * action_points
   * location
-    * x
-    * y
+    * x : int
+    * y : int
   * visible_tiles
     * tile
-      * x
-      * y
-
-
+      * x : int
+      * y : int
+      * traversable : boolean
+      * damage_delt_on_traverse : int
 Note that you can access any one of these variables as keys in a
 dictionary or as attributes of an object: e.g. `game['health']`,
 `game.health`, `game[location].x` etc.
