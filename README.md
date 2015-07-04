@@ -27,9 +27,11 @@ To create a robot, simply make a new Python file and define the Robot
 class and an implementation for the `Robot.act(self, game)` method.
 For example:
 
-    class Robot:
-        def act(self, game):
-            return ["guard"]
+```python
+class Robot:
+    def act(self, game):
+        return ["guard"]
+```
 
 Such a robot would guard for the entire game. Tactical!
 
