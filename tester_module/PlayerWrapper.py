@@ -7,13 +7,13 @@ class PlayerWrapper:
         self.display_chr = display_chr
         self.position = initial_position
         self.health = 20
-        self.energy = PlayerWrapper.max_energy #currently used for testing complex patterns
+        self.energy = PlayerWrapper.max_energy # currently used for testing complex patterns
 
     def act(self, tiles, board_size):
         self.energy = PlayerWrapper.max_energy
         attributes = struct(**{
-                "health":self.health,
-                "action_points":self.energy,
+                "health": self.health,
+                "action_points": self.energy,
                 "visible_tiles": tiles,
                 "board_size": board_size,
                 "location": self.position

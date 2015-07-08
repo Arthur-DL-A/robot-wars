@@ -1,4 +1,3 @@
-
 class BoardPlayerManager:
     '''
     A class that manages the board and its players and runs the high level logic of the game
@@ -73,10 +72,11 @@ class BoardPlayerManager:
                     "shoot": (2, self.player_attack),
                     "attack": (1, self.player_shoot),
                     }
-            if player.energy >= move_table[move_type][0]:
-                player.energy -= move_table[move_type][0]
-                move_table[move_type][1](player, move_data, self.board,
-                                    self.players)
-                '''except:
-                    raise Exception ("You messed up somewhere 'cause you tried to call [" + move_type + "] with arguements " + str(move_data))'''
-
+            try:
+                if player.energy >= move_table[move_type][0]:
+                    player.energy -= move_table[move_type][0]
+                    move_table[move_type][1](player, move_data, self.board,
+                                        self.players)
+            except:
+                print("You messed up somewhere 'cause you tried to call [" +
+                move_type + "] with arguments " + str(move_data))

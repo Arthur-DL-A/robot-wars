@@ -1,7 +1,7 @@
-
 class Board:
-    ''' 
-    A class that loads a board file and allows you to perform operations on the loaded data
+    '''
+    Loads a board file and allows you to perform operations on the
+    loaded data.
     '''
     def get_tiles(self, position, size):
         return self.data[position[1]-size:position[1]+size][position[0]-size:position[0]+size]
@@ -25,12 +25,13 @@ class Board:
             print()
 
     def load_file(self, file_lines):
-        lines = file_lines
+        size_line = file_lines[0]
+        lines = file_lines[1:]
+        self.board_size = [int (i) for i in size_line.split("x")]
+
         tile_dict = {}
-        size = [int (i) for i in lines[0].split("x")]
-        self.board_size = size
-        lines = lines[1:]
         skipcount = 0
+
         for line in lines:
             skipcount += 1
             if(line.strip() == "endtiles"):
@@ -54,4 +55,3 @@ class Board:
         self.board_size = (0,0)
         self.load_file(data_file_lines)
         self.print_board([])
-
